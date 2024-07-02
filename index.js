@@ -44,7 +44,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.customId === 'pinata') {
         try {
-            const channel = interaction.guild.channels.cache.get("1257626950638239836");
+            const channel = interaction.guild.channels.cache.get("1248014586234273802");
             if (!channel) throw new Error('Channel not found');
 
             const exampleEmbed = new EmbedBuilder()
