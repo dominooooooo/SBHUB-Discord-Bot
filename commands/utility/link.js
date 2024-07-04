@@ -37,7 +37,7 @@ module.exports = {
 
 				const exampleEmbed = new EmbedBuilder()
 				.setColor(0x4CBB17)
-				.setDescription('Your Squad Buster account is linked! Now use command </festival:1257621565600825355> to send a recruit!');
+				.setDescription('Your Squad Busters account is linked! Now use command </festival:1257621565600825355> to send a recruit!');
 
 				await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
 

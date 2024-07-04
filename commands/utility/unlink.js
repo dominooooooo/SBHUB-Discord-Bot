@@ -14,13 +14,13 @@ module.exports = {
 			if (result) {
 				const exampleEmbed = new EmbedBuilder()
 					.setColor(0xEE4B2B)
-					.setDescription('Your Squad Buster account is unlinked!');
+					.setDescription('Your Squad Busters account is unlinked!');
 
 				await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
 			} else {
 				const exampleEmbed = new EmbedBuilder()
 					.setColor(0xFFEA00)
-					.setDescription('No linked Squad Buster account found.');
+					.setDescription('No linked Squad Busters account found.');
 
 				await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
 			}
