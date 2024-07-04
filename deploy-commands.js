@@ -1,3 +1,5 @@
+require('dotenv').config();
+const { TOKEN } = process.env;
 const { REST, Routes } = require('discord.js');
 const fs = require('fs');
 const path = require('node:path');
@@ -20,12 +22,11 @@ for (const folder of commandFolders) {
 	}
 }
 
-const token = "MTI1NzQzODA1Mjk0MzY1OTA5MQ.GClLiM.sjj8Araim7r_FA4L0fIw8mPWsOJUxg0w24ddOM"
-const rest = new REST().setToken(token);
+const rest = new REST().setToken(TOKEN);
 
 (async () => {
 	const clientId = "1257438052943659091"
-  const guildId = "1257439891633995817"
+  	const guildId = "1257439891633995817"
 
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
