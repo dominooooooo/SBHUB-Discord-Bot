@@ -79,7 +79,7 @@ client.on(Events.InteractionCreate, async interaction => {
             await channel.send({ content: `<@${interaction.user.id}>`, embeds: [exampleEmbed2], components: [row] });
         } catch (error) {
             console.error('Error handling pinata interaction:', error);
-            await interaction.reply({ content: '**:white_check_mark: You need to paste link in this form**: \nhttps://link.squadbusters.com/en/AddFriend/. \n\n**:x: Not like this:** \nAdd me as a Friend in Squad Busters! https://link.squadbusters.com/en/AddFriend/', ephemeral: true });
+            await interaction.reply({ content: 'Please </link:1258512104038600757> your Squad Busters account first.', ephemeral: true });
         }
     }
 });

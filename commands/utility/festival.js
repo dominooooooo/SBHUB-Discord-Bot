@@ -1,7 +1,7 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, SlashCommandBuilder } = require('discord.js')
 
 module.exports = {
-	cooldown: 7200,
+	cooldown: 900,
 	data: new SlashCommandBuilder()
 		.setName('festival')
 		.setDescription('Post a Piñata Festival recruitment message'),
