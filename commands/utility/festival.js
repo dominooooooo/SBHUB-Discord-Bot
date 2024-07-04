@@ -9,8 +9,8 @@ module.exports = {
 async execute(interaction) {
 
 	const modal = new ModalBuilder()
-	.setCustomId('pinata')
-	.setTitle('Piñata Festival recruitment');
+		.setCustomId('pinata')
+		.setTitle('Piñata Festival recruitment');
 
 	const pinataCountInput = new TextInputBuilder()
 		.setCustomId('pinatacount')
@@ -18,16 +18,9 @@ async execute(interaction) {
 		.setPlaceholder('0-1500')
 		.setStyle(TextInputStyle.Short);
 
-	const pinataInviteInput = new TextInputBuilder()
-		.setCustomId('pinatainvite')
-		.setLabel("Your Piñata Festival invite")
-		.setPlaceholder('Paste your invite here (only link!)')  
-		.setStyle(TextInputStyle.Short);
-
 	const firstActionRow = new ActionRowBuilder().addComponents(pinataCountInput);
-	const secondActionRow = new ActionRowBuilder().addComponents(pinataInviteInput);
-
-	modal.addComponents(firstActionRow, secondActionRow);
+	
+	modal.addComponents(firstActionRow);
 	await interaction.showModal(modal);
 	},
 };

@@ -1,13 +1,15 @@
-require('dotenv').config()
+require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, GatewayIntentBits, Events, EmbedBuilder, ButtonBuilder, ButtonStyle , ActionRowBuilder} = require('discord.js');
-const { TOKEN } = process.env
+const mongoose = require('mongoose');
+const { Client, Collection, GatewayIntentBits, Events, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const User = require('./userSchema');
+const { TOKEN, MONGODB_URI } = process.env;
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.cooldowns = new Collection();
-
 client.commands = new Collection();
+
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -44,7 +46,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.customId === 'pinata') {
         try {
-            const channel = interaction.guild.channels.cache.get("1248014586234273802");
+            const channel = interaction.guild.channels.cache.get("1257626950638239836");
             if (!channel) throw new Error('Channel not found');
 
             const exampleEmbed = new EmbedBuilder()
@@ -52,7 +54,12 @@ client.on(Events.InteractionCreate, async interaction => {
                 .setDescription('Your Piñata Festival recruitment was posted!');
 
             const pinatacount = interaction.fields.getTextInputValue('pinatacount');
-            const pinatainvite = interaction.fields.getTextInputValue('pinatainvite');
+
+            const user = await User.findOne({ discordId: interaction.user.id });
+
+            if (!user) {
+                throw new Error('User not found');
+            }
 
             const exampleEmbed2 = new EmbedBuilder()
                 .setColor(0x4CBB17)
@@ -62,7 +69,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
             const join = new ButtonBuilder()
                 .setLabel('Join')
-                .setURL(pinatainvite)
+                .setURL(`https://link.squadbusters.com/en/JoinPinata/${user.supercellId}`)
                 .setStyle(ButtonStyle.Link);
 
             const row = new ActionRowBuilder()
@@ -71,8 +78,22 @@ client.on(Events.InteractionCreate, async interaction => {
             await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
             await channel.send({ content: `<@${interaction.user.id}>`, embeds: [exampleEmbed2], components: [row] });
         } catch (error) {
-            await interaction.reply({ content: '**:white_check_mark: You need to paste link in this form**: \nhttps:// link.squadbusters.com/en/AddFriend/. \n\n**:x: Not like this:** \nAdd me as a Friend in Squad Busters! https:// link.squadbusters.com/en/AddFriend/', ephemeral: true });
+            console.error('Error handling pinata interaction:', error);
+            await interaction.reply({ content: '**:white_check_mark: You need to paste link in this form**: \nhttps://link.squadbusters.com/en/AddFriend/. \n\n**:x: Not like this:** \nAdd me as a Friend in Squad Busters! https://link.squadbusters.com/en/AddFriend/', ephemeral: true });
         }
+    }
+});
+
+mongoose.connect(MONGODB_URI).then(() => {
+    console.log('Connected to MongoDB');
+}).catch(err => {
+    console.error('Failed to connect to MongoDB', err);
+});
+
+client.on('interactionCreate', async interaction => {
+    if (interaction.isModalSubmit()) {
+        const command = require('./commands/utility/link');
+        await command.modalSubmit(interaction);
     }
 });
 
