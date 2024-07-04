@@ -1,6 +1,8 @@
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const User = require('../../userSchema');
 
+//TESTI
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('link')
