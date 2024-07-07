@@ -2,11 +2,12 @@ require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const mongoose = require('mongoose');
-const { Client, Collection, GatewayIntentBits, Events, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
+const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const User = require('./userSchema');
+const { handlePinMessage } = require('./pinHandler');
 const { TOKEN, MONGODB_URI } = process.env;
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 client.cooldowns = new Collection();
 client.commands = new Collection();
 
@@ -40,61 +41,30 @@ for (const file of eventFiles) {
 	}
 }
 
-// FESTIVAL MODAL RESPONSE
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isModalSubmit()) return;
-
-    if (interaction.customId === 'pinata') {
-        try {
-            const channel = interaction.guild.channels.cache.get("1257626950638239836");
-            if (!channel) throw new Error('Channel not found');
-
-            const exampleEmbed = new EmbedBuilder()
-                .setColor(0x4CBB17)
-                .setDescription('Your Piñata Festival recruitment was posted!');
-
-            const pinatacount = interaction.fields.getTextInputValue('pinatacount');
-
-            const user = await User.findOne({ discordId: interaction.user.id });
-
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            const exampleEmbed2 = new EmbedBuilder()
-                .setColor(0x4CBB17)
-                .setDescription(`${interaction.user.username} is recruiting for the Piñata Festival!`)
-                .addFields({ name: `${interaction.user.username}'s Sticks`, value: `:ping_pong: ${pinatacount}` })
-                .setTimestamp();
-
-            const join = new ButtonBuilder()
-                .setLabel('Join')
-                .setURL(`https://link.squadbusters.com/en/JoinPinata/${user.supercellId}`)
-                .setStyle(ButtonStyle.Link);
-
-            const row = new ActionRowBuilder()
-                .addComponents(join);
-
-            await interaction.reply({ embeds: [exampleEmbed], ephemeral: true });
-            await channel.send({ content: `<@${interaction.user.id}>`, embeds: [exampleEmbed2], components: [row] });
-        } catch (error) {
-            console.error('Error handling pinata interaction:', error);
-            await interaction.reply({ content: 'Please </link:1258512104038600757> your Squad Busters account first.', ephemeral: true });
-        }
-    }
-});
-
 mongoose.connect(MONGODB_URI).then(() => {
     console.log('Connected to MongoDB');
 }).catch(err => {
     console.error('Failed to connect to MongoDB', err);
 });
 
-client.on('interactionCreate', async interaction => {
-    if (interaction.isModalSubmit()) {
-        const command = require('./commands/utility/link');
-        await command.modalSubmit(interaction);
+client.on("guildMemberAdd", async (member) => {
+    const roleID = '1259276534192013475';
+    const role = member.guild.roles.cache.get(roleID);
+    if (role) {
+        member.roles.add(role).catch(console.error);
     }
+
+    let user = await User.findOne({ discordId: member.id });
+    if (!user) {
+        user = new User({ discordId: member.id, pins: ['Ensiaskeleet'] });
+    } else {
+        if (!user.pins.includes('Ensiaskeleet')) {
+            user.pins.push('Ensiaskeleet');
+        }
+    }
+    await user.save();
+
+    await handlePinMessage(client, member);
 });
 
 client.login(TOKEN);

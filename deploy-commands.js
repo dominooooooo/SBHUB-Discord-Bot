@@ -26,7 +26,7 @@ const rest = new REST().setToken(TOKEN);
 
 (async () => {
 	const clientId = "1257438052943659091"
-  	const guildId = "1257439891633995817"
+  	const guildId = "1259271662885404773"
 
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
